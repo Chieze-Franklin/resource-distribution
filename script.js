@@ -2,6 +2,8 @@
 // original code: http://bl.ocks.org/Caged/6476579
 ////////////////////////////////////////////////////////////
 
+//
+
 var margin = {top: 40, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -9,7 +11,7 @@ var margin = {top: 40, right: 20, bottom: 30, left: 40},
 var coinsPerTransaction = 1; // number of coins to move per transaction
 var initialCoins = 20; // number of coins each person has at the beginning
 var interval = 1000; // interval between interactions, in milliseconds
-var numberOfPersons = 10;
+var numberOfPersons = 100;
 var persons = [];
 
 for (var idx = 0; idx < numberOfPersons; idx++) {
@@ -124,7 +126,7 @@ function type(d) {
 }
 
 var timerId = setInterval(() => {
-  var totalCoins = initialCoins * numberOfPersons;
+  var totalCoins = 100; // initialCoins * numberOfPersons;
   var data = [];
 
   // check if someone has all the coins
