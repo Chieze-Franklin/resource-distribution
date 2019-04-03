@@ -2,59 +2,68 @@
 // original code: http://bl.ocks.org/Caged/6476579
 ////////////////////////////////////////////////////////////
 
-//
-
-var margin = {top: 40, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
+var _width = 1000;
 var coinsPerTransaction = 1; // number of coins to move per transaction
-var initialCoins = 20; // number of coins each person has at the beginning
-var interval = 1000; // interval between interactions, in milliseconds
-var numberOfPersons = 100;
-var persons = [];
 
-for (var idx = 0; idx < numberOfPersons; idx++) {
-  persons.push({
-    id: idx + 1,
-    coins: initialCoins
-  });
-}
+document.getElementById("load_graph").addEventListener("click", function(){
+  _width = document.getElementById("graph_width").value || _width;
+  initGraph();
+});
 
-var formatPercent = d3.format("");
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(formatPercent);
-
-var tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    return "<strong>Number of Persons:</strong> <span style='color:red'>" + d.frequency + "</span><br >" +
-    "<strong>Coins:</strong> <span style='color:red'>" + d.letter + "</span>";
-  })
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-svg.call(tip);
 
 // -----------------------------------------------------------------------------
+function initGraph() {
+  var margin = {top: 40, right: 20, bottom: 30, left: 40},
+      width = _width - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+  
+  var initialCoins = 20; // number of coins each person has at the beginning
+  var interval = 1000; // interval between interactions, in milliseconds
+  var numberOfPersons = 100;
+  var persons = [];
+
+  for (var idx = 0; idx < numberOfPersons; idx++) {
+    persons.push({
+      id: idx + 1,
+      coins: initialCoins
+    });
+  }
+
+  var formatPercent = d3.format("");
+
+  var x = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(formatPercent);
+
+  var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+      return "<strong>Number of Persons:</strong> <span style='color:red'>" + d.frequency + "</span><br >" +
+      "<strong>Coins:</strong> <span style='color:red'>" + d.letter + "</span>";
+    })
+
+  var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  svg.call(tip);
+}
+
 function interact(person1, person2) {
   var totalCoins = person1.coins + person2.coins;
   var randomNum = Math.floor(Math.random() * (totalCoins + 1));
