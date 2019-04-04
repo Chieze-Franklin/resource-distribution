@@ -2,27 +2,35 @@
 // original code: http://bl.ocks.org/Caged/6476579
 ////////////////////////////////////////////////////////////
 
-var _width = 1000;
-var coinsPerTransaction = 1; // number of coins to move per transaction
+var coinsPerTransaction = 1;
+var initialCoins = 20;
+var interval = 1;
+var margin = {top: 40, right: 20, bottom: 30, left: 40};
+var numberOfPersons = 100;
+var persons = [];
+var svg;
+var takeLoserCoins = false;
+var tip;
+var _width = 1500, width, height;
+var x, xAxis, y, yAxis;
+      
 
 document.getElementById("load_graph").addEventListener("click", function(){
+  coinsPerTransaction = document.getElementById("coins_per_transaction").value || coinsPerTransaction;
+  initialCoins = document.getElementById("initial_coins").value || initialCoins;
+  interval = (document.getElementById("update_interval").value || interval) * 1000;
+  numberOfPersons = document.getElementById("number_of_persons").value || numberOfPersons;
   _width = document.getElementById("graph_width").value || _width;
+  var takeOrLeaveCoins = document.getElementsByClassName("btn btn-secondary active")[0].firstChild.nextElementSibling.id;
+  takeLoserCoins = takeOrLeaveCoins == "take_coins";
   initGraph();
+  updateGraph();
 });
 
 
 
 // -----------------------------------------------------------------------------
 function initGraph() {
-  var margin = {top: 40, right: 20, bottom: 30, left: 40},
-      width = _width - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
-  
-  var initialCoins = 20; // number of coins each person has at the beginning
-  var interval = 1000; // interval between interactions, in milliseconds
-  var numberOfPersons = 100;
-  var persons = [];
-
   for (var idx = 0; idx < numberOfPersons; idx++) {
     persons.push({
       id: idx + 1,
@@ -32,22 +40,25 @@ function initGraph() {
 
   var formatPercent = d3.format("");
 
-  var x = d3.scale.ordinal()
+  width = _width - margin.left - margin.right;
+  height = 500 - margin.top - margin.bottom;
+
+  x = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1);
 
-  var y = d3.scale.linear()
+  y = d3.scale.linear()
       .range([height, 0]);
 
-  var xAxis = d3.svg.axis()
+  xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom");
 
-  var yAxis = d3.svg.axis()
+  yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
       .tickFormat(formatPercent);
 
-  var tip = d3.tip()
+  tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
     .html(function(d) {
@@ -55,7 +66,7 @@ function initGraph() {
       "<strong>Coins:</strong> <span style='color:red'>" + d.letter + "</span>";
     })
 
-  var svg = d3.select("body").append("svg")
+  svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -70,18 +81,18 @@ function interact(person1, person2) {
   if (randomNum <= person1.coins) {
     if (coinsPerTransaction > person2.coins) {
       person1.coins += person2.coins;
-      person2.coins = 0;
+      if (takeLoserCoins) person2.coins = 0;
     } else {
       person1.coins += coinsPerTransaction;
-      person2.coins -= coinsPerTransaction;
+      if (takeLoserCoins) person2.coins -= coinsPerTransaction;
     }
     // TODO: display person1 as winner on page
   } else {
     if (coinsPerTransaction > person1.coins) {
-      person1.coins = 0;
+      if (takeLoserCoins) person1.coins = 0;
       person2.coins += person1.coins;
     } else {
-      person1.coins -= coinsPerTransaction;
+      if (takeLoserCoins) person1.coins -= coinsPerTransaction;
       person2.coins += coinsPerTransaction;
     }
     // TODO: display person2 as winner on page
@@ -134,29 +145,31 @@ function type(d) {
   return d;
 }
 
-var timerId = setInterval(() => {
-  var totalCoins = 100; // initialCoins * numberOfPersons;
-  var data = [];
-
-  // check if someone has all the coins
-  var winners = persons.filter(p => p.coins == totalCoins);
-  if (winners.length > 0) {
-    clearInterval(timerId);
-    return;
-  }
-
-  var person1 = pickRandomPerson();
-  // TODO: display info of person1 on page
-  var person2 = pickRandomPerson(person1);
-  // TODO: display info of person2 on page
-  interact(person1, person2);
-  for (var i = 0; i <= totalCoins; i++) { // the use of '<=' instead of '<' is deliberate because 
-                                          // one person can have all the coins
-    data.push({
-      letter: `${i}`,
-      frequency: persons.filter(p => p.coins == i).length
-    });
-  }
-  plotGraph(data);
-},
-interval);
+function updateGraph() {
+  var timerId = setInterval(() => {
+    var totalCoins = 100; // initialCoins * numberOfPersons;
+    var data = [];
+  
+    // check if someone has all the coins
+    var winners = persons.filter(p => p.coins == totalCoins);
+    if (winners.length > 0) {
+      clearInterval(timerId);
+      return;
+    }
+  
+    var person1 = pickRandomPerson();
+    // TODO: display info of person1 on page
+    var person2 = pickRandomPerson(person1);
+    // TODO: display info of person2 on page
+    interact(person1, person2);
+    for (var i = 0; i <= totalCoins; i++) { // the use of '<=' instead of '<' is deliberate because 
+                                            // one person can have all the coins
+      data.push({
+        letter: `${i}`,
+        frequency: persons.filter(p => p.coins == i).length
+      });
+    }
+    plotGraph(data);
+  },
+  interval);
+}

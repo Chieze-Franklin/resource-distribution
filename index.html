@@ -18,17 +18,75 @@
     <body>
         <div class="container">
             <div class="row">
+                <div class="col">&nbsp;</div>
+            </div>
+            <div class="row">
                 <div class="col">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1">Graph Width</span>
                             </div>
-                            <input type="text" id="graph_width" class="form-control" placeholder="1000" aria-label="Username" aria-describedby="basic-addon1">
+                            <input type="text" id="graph_width" class="form-control" placeholder="1000" aria-label="Username" aria-describedby="width of the graph">
+                            <div class="input-group-append">
+                                <span class="input-group-text">pixels</span>
+                            </div>
                         </div>
                 </div>
                 <div class="col">
-                        
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Update Interval</span>
+                            </div>
+                            <input type="text" id="update_interval" class="form-control" placeholder="1" aria-label="Username" aria-describedby="interval between graph updates, in seconds">
+                            <div class="input-group-append">
+                                <span class="input-group-text">seconds</span>
+                            </div>
+                        </div>
                 </div>
+                <div class="col"></div>
+            </div>
+            <div class="row">
+                <div class="col">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Number of Persons</span>
+                            </div>
+                            <input type="text" id="number_of_persons" class="form-control" placeholder="100" aria-label="Username" aria-describedby="">
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Initial Coins</span>
+                            </div>
+                            <input type="text" id="initial_coins" class="form-control" placeholder="20" aria-label="Username" aria-describedby="number of coins each person has at the beginning">
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Coins Moved Per Transaction</span>
+                            </div>
+                            <input type="text" id="coins_per_transaction" class="form-control" placeholder="1" aria-label="Username" aria-describedby="number of coins to move per transaction">
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="options" id="leave_coins" autocomplete="off" checked> Leave losers' coins
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="options" id="take_coins" autocomplete="off"> Take losers' coins
+                        </label>
+                    </div>
+                </div>
+                <div class="col"></div>
+                <div class="col"></div>
+            </div>
+            <div class="row">
+                <div class="col">&nbsp;</div>
             </div>
             <div class="row">
                 <div class="col">
