@@ -10,12 +10,14 @@ var numberOfPersons = 100;
 var persons = [];
 var svg;
 var takeLoserCoins = false;
+var timerId;
 var tip;
 var _width = 1500, width, height;
 var x, xAxis, y, yAxis;
       
 
 document.getElementById("load_graph").addEventListener("click", function(){
+  document.getElementById("load_graph").innerText = "Refresh Graph";
   coinsPerTransaction = document.getElementById("coins_per_transaction").value || coinsPerTransaction;
   initialCoins = document.getElementById("initial_coins").value || initialCoins;
   interval = (document.getElementById("update_interval").value || interval) * 1000;
@@ -23,6 +25,7 @@ document.getElementById("load_graph").addEventListener("click", function(){
   _width = document.getElementById("graph_width").value || _width;
   var takeOrLeaveCoins = document.getElementsByClassName("btn btn-secondary active")[0].firstChild.nextElementSibling.id;
   takeLoserCoins = takeOrLeaveCoins == "take_coins";
+  if (timerId) clearInterval(timerId);
   initGraph();
   updateGraph();
 });
@@ -66,6 +69,7 @@ function initGraph() {
       "<strong>Coins:</strong> <span style='color:red'>" + d.letter + "</span>";
     })
 
+  d3.select("svg").remove();
   svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -146,7 +150,7 @@ function type(d) {
 }
 
 function updateGraph() {
-  var timerId = setInterval(() => {
+  timerId = setInterval(() => {
     var totalCoins = 100; // initialCoins * numberOfPersons;
     var data = [];
   
