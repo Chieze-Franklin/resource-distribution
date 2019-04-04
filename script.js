@@ -6,6 +6,7 @@ var coinsPerTransaction = 1;
 var initialCoins = 20;
 var interval = 1;
 var margin = {top: 40, right: 20, bottom: 30, left: 40};
+var maxCoins = 100;
 var numberOfPersons = 100;
 var persons = [];
 var svg;
@@ -21,6 +22,7 @@ document.getElementById("load_graph").addEventListener("click", function(){
   coinsPerTransaction = document.getElementById("coins_per_transaction").value || coinsPerTransaction;
   initialCoins = document.getElementById("initial_coins").value || initialCoins;
   interval = (document.getElementById("update_interval").value || interval) * 1000;
+  maxCoins = document.getElementById("max_coins").value || maxCoins;
   numberOfPersons = document.getElementById("number_of_persons").value || numberOfPersons;
   _width = document.getElementById("graph_width").value || _width;
   var takeOrLeaveCoins = document.getElementsByClassName("btn btn-secondary active")[0].firstChild.nextElementSibling.id;
@@ -151,11 +153,10 @@ function type(d) {
 
 function updateGraph() {
   timerId = setInterval(() => {
-    var totalCoins = 100; // initialCoins * numberOfPersons;
     var data = [];
   
     // check if someone has all the coins
-    var winners = persons.filter(p => p.coins == totalCoins);
+    var winners = persons.filter(p => p.coins == maxCoins);
     if (winners.length > 0) {
       clearInterval(timerId);
       return;
@@ -166,7 +167,7 @@ function updateGraph() {
     var person2 = pickRandomPerson(person1);
     // TODO: display info of person2 on page
     interact(person1, person2);
-    for (var i = 0; i <= totalCoins; i++) { // the use of '<=' instead of '<' is deliberate because 
+    for (var i = 0; i <= maxCoins; i++) { // the use of '<=' instead of '<' is deliberate because 
                                             // one person can have all the coins
       data.push({
         letter: `${i}`,
