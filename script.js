@@ -18,16 +18,40 @@ var x, xAxis, y, yAxis;
       
 
 document.getElementById("load_graph").addEventListener("click", function(){
-  document.getElementById("load_graph").innerText = "Refresh Graph";
-  coinsPerTransaction = document.getElementById("coins_per_transaction").value || coinsPerTransaction;
-  initialCoins = document.getElementById("initial_coins").value || initialCoins;
-  interval = (document.getElementById("update_interval").value || interval) * 1000;
-  maxCoins = document.getElementById("max_coins").value || maxCoins;
-  numberOfPersons = document.getElementById("number_of_persons").value || numberOfPersons;
-  _width = document.getElementById("graph_width").value || _width;
+  coinsPerTransaction = parseInt(document.getElementById("coins_per_transaction").value, 10) || coinsPerTransaction;
+  initialCoins = parseInt(document.getElementById("initial_coins").value, 10) || initialCoins;
+  interval = parseFloat(document.getElementById("update_interval").value) || interval;
+  maxCoins = parseInt(document.getElementById("max_coins").value, 10) || maxCoins;
+  numberOfPersons = parseInt(document.getElementById("number_of_persons").value, 10) || numberOfPersons;
+  _width = parseInt(document.getElementById("graph_width").value, 10) || _width;
   var takeOrLeaveCoins = document.getElementsByClassName("btn btn-secondary active")[0].firstChild.nextElementSibling.id;
   takeLoserCoins = takeOrLeaveCoins == "take_coins";
-  if (timerId) clearInterval(timerId);
+  
+  if (_width < 500 || _width > 3500) {
+    alert("The value for 'Graph Width' cannot be less than 500 or greater than 3500.");
+    return;
+  }
+  if (interval < 0.1 || interval > 30) {
+    alert("The value for 'Update Interval' cannot be less than 0.1 or greater than 30.");
+    return;
+  }
+  if (numberOfPersons < 2 || numberOfPersons > 1000) {
+    alert("The value for 'Number of Persons' cannot be less than 2 or greater than 1000.");
+    return;
+  }
+  if (initialCoins < 2 || initialCoins > 1000) {
+    alert("The value for 'Initial Coins' cannot be less than 2 or greater than 1000.");
+    return;
+  }
+  if (coinsPerTransaction < 1 || coinsPerTransaction >= initialCoins) {
+    alert("The value for 'Coins Moved per Transaction' cannot be less than 1 and must be less than the value for 'Initial Coins'.");
+    return;
+  }
+  if (maxCoins <= initialCoins || maxCoins > (initialCoins * numberOfPersons)) {
+    alert("The value for 'Maximum Obtainable Coins' must be greater than the value for 'Initial Coins' and must be less than the products of the values of 'Initial Coins' and 'Number of Persons'.");
+    return;
+  }
+  interval = interval * 1000; // convert to milliseconds
   initGraph();
   updateGraph();
 });
@@ -36,6 +60,10 @@ document.getElementById("load_graph").addEventListener("click", function(){
 
 // -----------------------------------------------------------------------------
 function initGraph() {
+  document.getElementById("load_graph").innerText = "Refresh Graph";
+
+  if (timerId) clearInterval(timerId);
+
   for (var idx = 0; idx < numberOfPersons; idx++) {
     persons.push({
       id: idx + 1,
